@@ -138,6 +138,10 @@ Options accepted by **fscryptctl set_policy**:
 :   Optimize for eMMC inline encryption hardware.  For details, see the Linux
     kernel documentation for `FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32`.
 
+**\-\-contents\-explicit\-iv**
+:   Support reflinks (i.e., **ioctl_ficlonerange**(2)).  For details, see the
+    Linux kernel documentation for `FSCRYPT_POLICY_FLAG_CONTENTS_EXPLICIT_IV`.
+
 # SEE ALSO
 
 * [**fscryptctl** README

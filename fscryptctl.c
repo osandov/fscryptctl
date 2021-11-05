@@ -80,6 +80,7 @@ static const int padding_values[] = {4, 8, 16, 32};
 enum {
   OPT_ALL_USERS,
   OPT_CONTENTS,
+  OPT_CONTENTS_EXPLICIT_IV,
   OPT_DIRECT_KEY,
   OPT_FILENAMES,
   OPT_IV_INO_LBLK_32,
@@ -128,6 +129,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out) {
       "            optimize for UFS inline crypto hardware\n"
       "        --iv-ino-lblk-32\n"
       "            optimize for eMMC inline crypto hardware (not recommended)\n"
+      "        --contents-explicit-iv\n"
+      "            support reflinks\n"
       "\nNotes:\n"
       "  Keys are identified by 32-character hex strings (key identifiers).\n"
       "\n"
@@ -554,6 +557,11 @@ static void show_policy_flags(uint8_t flags) {
     flags &= ~FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32;
   }
 
+  if (flags & FSCRYPT_POLICY_FLAG_CONTENTS_EXPLICIT_IV) {
+    printf(", CONTENTS_EXPLICIT_IV");
+    flags &= ~FSCRYPT_POLICY_FLAG_CONTENTS_EXPLICIT_IV;
+  }
+
   if (flags != 0) {
     printf(", Unknown (%02x)", flags);
   }
@@ -627,6 +635,7 @@ static int cmd_set_policy(int argc, char *const argv[]) {
       {"direct-key", no_argument, NULL, OPT_DIRECT_KEY},
       {"iv-ino-lblk-64", no_argument, NULL, OPT_IV_INO_LBLK_64},
       {"iv-ino-lblk-32", no_argument, NULL, OPT_IV_INO_LBLK_32},
+      {"contents-explicit-iv", no_argument, NULL, OPT_CONTENTS_EXPLICIT_IV},
       {NULL, 0, NULL, 0}};
 
   int ch, padding_flag;
@@ -662,6 +671,9 @@ static int cmd_set_policy(int argc, char *const argv[]) {
       case OPT_IV_INO_LBLK_32:
         printf("warning: --iv-ino-lblk-32 should normally not be used\n");
         flags |= FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32;
+        break;
+      case OPT_CONTENTS_EXPLICIT_IV:
+        flags |= FSCRYPT_POLICY_FLAG_CONTENTS_EXPLICIT_IV;
         break;
       default:
         usage(stderr);
